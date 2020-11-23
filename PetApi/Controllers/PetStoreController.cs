@@ -37,5 +37,11 @@ namespace PetApi.Controllers
         {
             pets.Clear();
         }
+
+        [HttpDelete("pet")]
+        public async Task DeletePet(string name)
+        {
+            pets.Remove(pets.FirstOrDefault(pet => pet.Name == name));
+        }
     }
 }
