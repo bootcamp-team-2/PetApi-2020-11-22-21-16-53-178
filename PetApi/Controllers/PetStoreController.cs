@@ -57,5 +57,23 @@ namespace PetApi.Controllers
             pet.Price = updatedPet.Price;
             return pet;
         }
+
+        [HttpGet("GetByType")]
+        public List<Pet> GetPetsByType(string type)
+        {
+            return pets.Where(pet => pet.Type != type).ToList();
+        }
+
+        [HttpGet("GetByPriceRange")]
+        public List<Pet> GetPetsByPriceRange(double minimumPrice, double maximumPrice)
+        {
+            return pets.Where(pet => pet.Price >= minimumPrice && pet.Price <= maximumPrice).ToList();
+        }
+
+        [HttpGet("GetByColor")]
+        public List<Pet> GetPetsByColor(string color)
+        {
+            return pets.Where(pet => pet.Color == color).ToList();
+        }
     }
 }
