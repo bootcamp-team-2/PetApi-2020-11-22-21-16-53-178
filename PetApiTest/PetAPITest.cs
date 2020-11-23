@@ -124,5 +124,32 @@ namespace PetApiTest
             List<Pet> actualPets = JsonConvert.DeserializeObject<List<Pet>>(responseString);
             Assert.Equal(100, actualPets[0].Price);
         }
+
+        [Fact]
+        public async void Should_get_right_pets_When_search_by_type()
+        {
+            //given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("petStore/removePets");
+            Pet pet1 = new Pet("XiaoBai", "cat", "white", 2000);
+            Pet pet2 = new Pet("DaHuang", "dog", "white", 5000);
+            Pet pet3 = new Pet("WangCai", "dog", "white", 5000);
+            Pet pet4 = new Pet("JiaFei", "cat", "white", 2000);
+            List<Pet> pets = new List<Pet>() { pet1, pet2, pet3, pet4 };
+            string request = JsonConvert.SerializeObject(pets);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            //when
+            await client.PostAsync("petStore/addNewPets", requestBody);
+            var response = await client.GetAsync("PetStore/type/cat");
+            //then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            List<Pet> actualPets = JsonConvert.DeserializeObject<List<Pet>>(responseString);
+            Assert.Contains(pet1, actualPets);
+            Assert.Contains(pet4, actualPets);
+            Assert.DoesNotContain(pet2, actualPets);
+            Assert.DoesNotContain(pet3, actualPets);
+        }
     }
 }

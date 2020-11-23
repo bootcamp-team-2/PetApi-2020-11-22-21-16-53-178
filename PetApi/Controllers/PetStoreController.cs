@@ -34,6 +34,12 @@ namespace PetApi.Controllers
             return pets.FirstOrDefault(pet => pet.Name == name);
         }
 
+        [HttpGet("type/{type}")]
+        public List<Pet> GetPetByType(string type)
+        {
+            return pets.Where(pet => pet.Type == type).Select(x => x).ToList();
+        }
+
         [HttpDelete("RemoveSoldPet/{name}")]
         public List<Pet> RemoveOnePet(string name)
         {
