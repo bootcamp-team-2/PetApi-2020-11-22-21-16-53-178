@@ -129,5 +129,32 @@ namespace PetApiTest
             List<Pet> actrualPet = JsonConvert.DeserializeObject<List<Pet>>(responseString);
             Assert.Equal(new List<Pet> { pet2 }, actrualPet);
         }
+
+        [Fact]
+        public async Task Should_Return_The_Updated_Pet_When_Modify_Price()
+        {
+            //given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("PetStore/Clear");
+
+            Pet pet = new Pet("huahua", "dog", "black", 5000);
+            string request = JsonConvert.SerializeObject(pet);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("PetStore/addNewPet", requestBody);
+
+            UpdatedPet updatedPet = new UpdatedPet("huahua", 2000);
+            string updatedrequest = JsonConvert.SerializeObject(updatedPet);
+            StringContent updatedrequestBody = new StringContent(updatedrequest, Encoding.UTF8, "application/json");
+
+            //when
+            var response = await client.PatchAsync($"PetStore/UpdatePrice", updatedrequestBody);
+
+            //then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            Pet actrualPet = JsonConvert.DeserializeObject<Pet>(responseString);
+            Assert.Equal(updatedPet.Price, actrualPet.Price);
+        }
     }
 }

@@ -49,5 +49,13 @@ namespace PetApi.Controllers
 
             return pets.Where(pet => pet.Name != name).ToList();
         }
+
+        [HttpPatch("UpdatePrice")]
+        public Pet UpsertPetByName(UpdatedPet updatedPet)
+        {
+            var pet = pets.Where(pet => pet.Name == updatedPet.Name).FirstOrDefault();
+            pet.Price = updatedPet.Price;
+            return pet;
+        }
     }
 }
