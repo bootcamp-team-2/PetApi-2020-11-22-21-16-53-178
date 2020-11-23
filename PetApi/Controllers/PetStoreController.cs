@@ -26,6 +26,19 @@ namespace PetApi.Controllers
             return pets.FirstOrDefault(pet => pet.Name == name);
         }
 
+        [HttpPatch("pets")]
+        public async Task<Pet> UpdatePet(Pet petToUpdate)
+        {
+            if (!pets.Any(pet => pet.Name == petToUpdate.Name))
+            {
+                return null;
+            }
+
+            var pet = pets.First(pet => pet.Name == petToUpdate.Name);
+            pet.Price = petToUpdate.Price;
+            return pet;
+        }
+
         [HttpGet("pets")]
         public async Task<IEnumerable<Pet>> GetPets(string type, string color, string minPrice, string maxPrice)
         {
