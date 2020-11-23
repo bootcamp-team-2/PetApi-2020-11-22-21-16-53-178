@@ -19,6 +19,21 @@ namespace PetApi.Controllers
             return pet;
         }
 
+        [HttpPost("addNewPets")]
+        public void AddPet(List<Pet> newPets)
+        {
+            foreach (var newPet in newPets)
+            {
+                pets.Add(newPet);
+            }
+        }
+
+        [HttpGet("{name}")]
+        public Pet GetPetByName(string name)
+        {
+            return pets.FirstOrDefault(pet => pet.Name == name);
+        }
+
         [HttpGet("pets")]
         public List<Pet> Getall()
         {
