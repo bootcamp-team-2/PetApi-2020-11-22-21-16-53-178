@@ -34,6 +34,12 @@ namespace PetApi.Controllers
             return pets.FirstOrDefault(pet => pet.Name == name);
         }
 
+        [HttpDelete("RemoveSoldPet/{name}")]
+        public List<Pet> RemoveOnePet(string name)
+        {
+            return pets.Where(pet => pet.Name != name).ToList();
+        }
+
         [HttpGet("pets")]
         public List<Pet> Getall()
         {
@@ -41,7 +47,7 @@ namespace PetApi.Controllers
         }
 
         [HttpDelete("removePets")]
-        public void Delete()
+        public void ClearPets()
         {
             pets.Clear();
         }
