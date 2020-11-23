@@ -61,11 +61,18 @@ namespace PetApi.Controllers
         [HttpPatch("ModifyPrice/{name}")]
         public List<Pet> ModifyPrice(string name, UpdatePet newPet)
         {
-            return pets.Where(pet => pet.Name == name).Select(pet => 
-            { 
+            return pets.Where(pet => pet.Name == name).Select(pet =>
+            {
                 pet.Price = newPet.Price;
                 return pet;
             }).ToList();
+        }
+
+        [HttpPost("priceRange")]
+        public List<Pet> FingByPriceRange(int[] priceRange)
+        {
+            return pets.Where(pet => pet.Price >= priceRange.Min() && pet.Price <= priceRange.Max()).
+                Select(x => x).ToList();
         }
     }
 }
