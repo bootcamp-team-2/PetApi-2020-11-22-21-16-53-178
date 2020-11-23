@@ -86,5 +86,35 @@ namespace PetApiTest
             List<Pet> actualPet = JsonConvert.DeserializeObject<List<Pet>>(responseString);
             Assert.Equal(new List<Pet>() { pet_2 }, actualPet);
         }
+
+        [Fact]
+        public async Task Should_Delete_Pet_Given_Pet()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("petStore/clear");
+
+            string petName = "Baymax";
+            Pet pet_1 = new Pet(petName, "dog", "white", 5000);
+            Pet pet_2 = new Pet("Tom", "cat", "black", 1300);
+            string request_1 = JsonConvert.SerializeObject(pet_1);
+            StringContent requestBody_1 = new StringContent(request_1, Encoding.UTF8, "application/json");
+            await client.PostAsync("petStore/addNewPet", requestBody_1);
+
+            string request_2 = JsonConvert.SerializeObject(pet_2);
+            StringContent requestBody_2 = new StringContent(request_2, Encoding.UTF8, "application/json");
+            await client.PostAsync("petStore/addNewPet", requestBody_2);
+
+            // when
+            await client.DeleteAsync($"petStore/deletePet?name={petName}");
+            var response = await client.GetAsync("petStore/pets");
+
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            List<Pet> actualPet = JsonConvert.DeserializeObject<List<Pet>>(responseString);
+            Assert.Equal(new List<Pet>() { pet_2 }, actualPet);
+        }
     }
 }

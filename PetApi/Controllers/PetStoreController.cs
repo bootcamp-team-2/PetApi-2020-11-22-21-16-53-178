@@ -36,5 +36,11 @@ namespace PetApi.Controllers
         {
             pets.Clear();
         }
+
+        [HttpDelete("deletePet")]
+        public void DeletePet(string name)
+        {
+            pets = pets.Where(pet => pet.Name != name).ToList();
+        }
     }
 }
