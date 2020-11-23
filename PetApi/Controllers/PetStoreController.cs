@@ -27,24 +27,12 @@ namespace PetApi.Controllers
         }
 
         [HttpGet("pets")]
-        public async Task<IEnumerable<Pet>> GetPets(string type, string color)
+        public async Task<IEnumerable<Pet>> GetPets(string type, string color, string minPrice, string maxPrice)
         {
-            if (string.IsNullOrEmpty(type) && string.IsNullOrEmpty(color))
-            {
-                return pets;
-            }
-
-            if (string.IsNullOrEmpty(color))
-            {
-                return pets.Where(pet => pet.Type == type);
-            }
-
-            if (string.IsNullOrEmpty(type))
-            {
-                return pets.Where(pet => pet.Color == color);
-            }
-
-            return pets.Where(pet => pet.Color == color && pet.Type == type);
+            return pets.Where(pet => GetTypeCondition(type, pet) 
+                                     && GetColorCondition(color, pet)
+                                     && GetMinPriceCondition(minPrice, pet)
+                                     && GetMaxPriceCondition(maxPrice, pet));
         }
 
         [HttpDelete("clear")]
@@ -57,6 +45,46 @@ namespace PetApi.Controllers
         public async Task DeletePet(string name)
         {
             pets.Remove(pets.FirstOrDefault(pet => pet.Name == name));
+        }
+
+        private bool GetTypeCondition(string type, Pet pet)
+        {
+            if (string.IsNullOrEmpty(type))
+            {
+                return true;
+            }
+
+            return pet.Type == type;
+        }
+
+        private bool GetColorCondition(string color, Pet pet)
+        {
+            if (string.IsNullOrEmpty(color))
+            {
+                return true;
+            }
+
+            return pet.Color == color;
+        }
+
+        private bool GetMinPriceCondition(string minPrice, Pet pet)
+        {
+            if (string.IsNullOrEmpty(minPrice))
+            {
+                return true;
+            }
+
+            return pet.Price >= int.Parse(minPrice);
+        }
+
+        private bool GetMaxPriceCondition(string maxPrice, Pet pet)
+        {
+            if (string.IsNullOrEmpty(maxPrice))
+            {
+                return true;
+            }
+
+            return pet.Price <= int.Parse(maxPrice);
         }
     }
 }
