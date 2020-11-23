@@ -14,24 +14,34 @@ namespace PetApi.Controllers
         private static IList<Pet> pets = new List<Pet>();
 
         [HttpPost("addNewPet")]
-        public async Task<Pet> AddPetAsync(Pet pet)
+        public async Task<ActionResult<Pet>> AddPetAsync(Pet pet)
         {
+            if (pets.Any(p => p.Name == pet.Name))
+            {
+                return BadRequest();
+            }
+
             pets.Add(pet);
             return pet;
         }
 
         [HttpGet("pet")]
-        public async Task<Pet> GetPet(string name)
+        public async Task<ActionResult<Pet>> GetPet(string name)
         {
+            if (!pets.Any(p => p.Name == name))
+            {
+                return NotFound();
+            }
+
             return pets.FirstOrDefault(pet => pet.Name == name);
         }
 
         [HttpPatch("pets")]
-        public async Task<Pet> UpdatePet(Pet petToUpdate)
+        public async Task<ActionResult<Pet>> UpdatePet(Pet petToUpdate)
         {
             if (!pets.Any(pet => pet.Name == petToUpdate.Name))
             {
-                return null;
+                return BadRequest();
             }
 
             var pet = pets.First(pet => pet.Name == petToUpdate.Name);
@@ -40,12 +50,13 @@ namespace PetApi.Controllers
         }
 
         [HttpGet("pets")]
-        public async Task<IEnumerable<Pet>> GetPets(string type, string color, string minPrice, string maxPrice)
+        public async Task<ActionResult<IList<Pet>>> GetPets(string type, string color, string minPrice, string maxPrice)
         {
             return pets.Where(pet => GetTypeCondition(type, pet) 
                                      && GetColorCondition(color, pet)
                                      && GetMinPriceCondition(minPrice, pet)
-                                     && GetMaxPriceCondition(maxPrice, pet));
+                                     && GetMaxPriceCondition(maxPrice, pet))
+                .ToList();
         }
 
         [HttpDelete("clear")]

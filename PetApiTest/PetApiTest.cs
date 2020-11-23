@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
 using PetApi;
@@ -87,8 +88,7 @@ namespace PetApiTest
             await client.DeleteAsync("petStore/pet?name=BayMax");
 
             var response = await client.GetAsync("petStore/pet?name=BayMax");
-            var responseString = await response.Content.ReadAsStringAsync();
-            Assert.Empty(responseString);
+            Assert.Equal(StatusCodes.Status404NotFound, (int)response.StatusCode);
         }
 
         [Fact]
