@@ -137,12 +137,17 @@ namespace PetApiTest
             StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
             // when
             var response = await client.PutAsync($"petStore/updatePet?name={petName}", requestBody);
-
+            var getResponse = await client.GetAsync("petStore/pets");
             // then
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
             Pet actualPet = JsonConvert.DeserializeObject<Pet>(responseString);
             Assert.Equal(pet_1, actualPet);
+
+            getResponse.EnsureSuccessStatusCode();
+            var getResponseString = await getResponse.Content.ReadAsStringAsync();
+            List<Pet> actualPets = JsonConvert.DeserializeObject<List<Pet>>(getResponseString);
+            Assert.Equal(new List<Pet>() { pet_1 }, actualPets);
         }
 
         [Fact]
@@ -226,6 +231,17 @@ namespace PetApiTest
             Pet pet_1 = new Pet("Baymax", "dog", "white", 5000);
             Pet pet_2 = new Pet("Tom", "cat", "black", 1300);
             Pet pet_3 = new Pet("Hans", "cat", "white", 300);
+
+            // Cannot use async linq
+
+            //List<Pet> inputPets = new List<Pet>() { pet_1, pet_2, pet_3 };
+            //inputPets.ForEach(async pet =>
+            //{
+            //    string request = JsonConvert.SerializeObject(pet);
+            //    StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            //    await client.PostAsync("petStore/addNewPet", requestBody);
+            //});
+
             string request = JsonConvert.SerializeObject(pet_1);
             StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
             await client.PostAsync("petStore/addNewPet", requestBody);
