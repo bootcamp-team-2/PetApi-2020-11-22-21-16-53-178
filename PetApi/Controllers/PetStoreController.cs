@@ -11,7 +11,7 @@ namespace PetApi.Controllers
     [Route("[controller]")]
     public class PetStoreController : ControllerBase
     {
-        private List<Pet> pets = new List<Pet>();
+        private static List<Pet> pets = new List<Pet>();
         [HttpPost("addNewPet")]
         public Pet AddPet(Pet pet)
         {

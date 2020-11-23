@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -31,24 +32,24 @@ namespace PetApiTest
             Assert.Equal(pet, actualPet);
         }
 
-        //[Fact]
-        //public async void Should_get_right_info_When_get_all_pet()
-        //{
-        //    //given
-        //    TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
-        //    HttpClient client = server.CreateClient();
-        //    await client.DeleteAsync("petStore/removePets");
-        //    Pet pet = new Pet("huanhuan", "dog", "white", 5000);
-        //    string request = JsonConvert.SerializeObject(pet); //该方法强制调用空构造函数，再拿属性
-        //    StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
-        //    //when
-        //    await client.PostAsync("petStore/addNewPet", requestBody);
-        //    var response = await client.GetAsync("petStore/pets");
-        //    //then
-        //    response.EnsureSuccessStatusCode();
-        //    var responseString = await response.Content.ReadAsStringAsync();
-        //    Pet actualPet = JsonConvert.DeserializeObject<Pet>(responseString);
-        //    Assert.Equal(pet, actualPet);
-        //}
+        [Fact]
+        public async void Should_get_right_info_When_get_all_pet()
+        {
+            //given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("petStore/removePets");
+            Pet pet = new Pet("huanhuan", "dog", "white", 5000);
+            string request = JsonConvert.SerializeObject(pet);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            //when
+            await client.PostAsync("petStore/addNewPet", requestBody);
+            var response = await client.GetAsync("petStore/pets");
+            //then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            List<Pet> actualPets = JsonConvert.DeserializeObject<List<Pet>>(responseString);
+            Assert.Contains(pet, actualPets);
+        }
     }
 }
