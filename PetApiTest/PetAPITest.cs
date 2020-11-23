@@ -99,5 +99,30 @@ namespace PetApiTest
             Assert.Contains(pet2, actualPets);
             Assert.DoesNotContain(pet3, actualPets);
         }
+
+        [Fact]
+        public async void Should_be_able_to_modify_the_price_of_a_pet()
+        {
+            //given
+            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("petStore/removePets");
+            Pet pet = new Pet("huanhuan", "dog", "white", 5000);
+            string request = JsonConvert.SerializeObject(pet);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            //when
+            await client.PostAsync("petStore/addNewPet", requestBody);
+
+            UpdatePet newpet = new UpdatePet("huanhuan", 100);
+            string request2 = JsonConvert.SerializeObject(newpet);
+            StringContent requestBody2 = new StringContent(request2, Encoding.UTF8, "application/json");
+            //when
+            var response = await client.PatchAsync("petStore/ModifyPrice/huanhuan", requestBody2);
+            //then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            List<Pet> actualPets = JsonConvert.DeserializeObject<List<Pet>>(responseString);
+            Assert.Equal(100, actualPets[0].Price);
+        }
     }
 }

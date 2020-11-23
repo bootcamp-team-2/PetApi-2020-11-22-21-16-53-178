@@ -40,4 +40,20 @@ namespace PetApi
             return Name == otherpet.Name && Type == otherpet.Type && Color == otherpet.Color && Price == otherpet.Price;
         }
     }
+
+    public class UpdatePet
+    {
+        public UpdatePet()
+        {
+        }
+
+        public UpdatePet(string name, int price)
+        {
+            this.Name = name;
+            this.Price = price;
+        }
+
+        public string Name { get; set; }
+        public int Price { get; set; }
+    }
 }

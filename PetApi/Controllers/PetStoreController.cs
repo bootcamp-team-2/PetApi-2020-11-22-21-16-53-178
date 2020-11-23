@@ -51,5 +51,15 @@ namespace PetApi.Controllers
         {
             pets.Clear();
         }
+
+        [HttpPatch("ModifyPrice/{name}")]
+        public List<Pet> ModifyPrice(string name, UpdatePet newPet)
+        {
+            return pets.Where(pet => pet.Name == name).Select(pet => 
+            { 
+                pet.Price = newPet.Price;
+                return pet;
+            }).ToList();
+        }
     }
 }
