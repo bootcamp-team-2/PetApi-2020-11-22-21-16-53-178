@@ -25,6 +25,12 @@ namespace PetApi.Controllers
             return pets;
         }
 
+        [HttpGet("getPetByName")]
+        public IList<Pet> GetPetByName(string name)
+        {
+            return pets.Where(pet => pet.Name == name).ToList();
+        }
+
         [HttpDelete("clear")]
         public void Clear()
         {
