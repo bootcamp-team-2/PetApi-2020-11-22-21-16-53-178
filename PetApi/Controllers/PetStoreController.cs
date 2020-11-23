@@ -26,6 +26,12 @@ namespace PetApi.Controllers
             return pets;
         }
 
+        [HttpGet("pet")]
+        public async Task<Pet> GetPet(string name)
+        {
+            return pets.FirstOrDefault(pet => pet.Name == name);
+        }
+
         [HttpDelete("clear")]
         public void Clear()
         {
