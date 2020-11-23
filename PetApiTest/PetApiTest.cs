@@ -90,5 +90,24 @@ namespace PetApiTest
             var responseString = await response.Content.ReadAsStringAsync();
             Assert.Empty(responseString);
         }
+
+        [Fact]
+        public async Task Should_return_pets_with_same_type_when_given_type()
+        {
+            TestServer testServer = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+            HttpClient client = testServer.CreateClient();
+            Pet pet = new Pet("BayMax", "dog", "white", 5000);
+            string request = JsonConvert.SerializeObject(pet);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+
+            await client.DeleteAsync("petStore/clear");
+            await client.PostAsync("petStore/addNewPet", requestBody);
+
+            var response = await client.GetAsync("petStore/pets?type=dog");
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualPets = JsonConvert.DeserializeObject<IList<Pet>>(responseString);
+            Assert.Equal(new List<Pet>() { pet }, actualPets);
+        }
     }
 }

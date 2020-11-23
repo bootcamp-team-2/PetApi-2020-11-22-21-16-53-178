@@ -20,16 +20,21 @@ namespace PetApi.Controllers
             return pet;
         }
 
-        [HttpGet("pets")]
-        public async Task<IList<Pet>> GetAllPets()
-        {
-            return pets;
-        }
-
         [HttpGet("pet")]
         public async Task<Pet> GetPet(string name)
         {
             return pets.FirstOrDefault(pet => pet.Name == name);
+        }
+
+        [HttpGet("pets")]
+        public async Task<IEnumerable<Pet>> GetPets(string type)
+        {
+            if (string.IsNullOrEmpty(type))
+            {
+                return pets;
+            }
+
+            return pets.Where(pet => pet.Type == type);
         }
 
         [HttpDelete("clear")]
