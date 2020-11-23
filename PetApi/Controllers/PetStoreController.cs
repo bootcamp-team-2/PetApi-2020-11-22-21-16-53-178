@@ -27,14 +27,24 @@ namespace PetApi.Controllers
         }
 
         [HttpGet("pets")]
-        public async Task<IEnumerable<Pet>> GetPets(string type)
+        public async Task<IEnumerable<Pet>> GetPets(string type, string color)
         {
-            if (string.IsNullOrEmpty(type))
+            if (string.IsNullOrEmpty(type) && string.IsNullOrEmpty(color))
             {
                 return pets;
             }
 
-            return pets.Where(pet => pet.Type == type);
+            if (string.IsNullOrEmpty(color))
+            {
+                return pets.Where(pet => pet.Type == type);
+            }
+
+            if (string.IsNullOrEmpty(type))
+            {
+                return pets.Where(pet => pet.Color == color);
+            }
+
+            return pets.Where(pet => pet.Color == color && pet.Type == type);
         }
 
         [HttpDelete("clear")]
